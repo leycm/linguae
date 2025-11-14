@@ -51,9 +51,9 @@ dependencyResolutionManagement {
 // ─────────────────────────────
 //  Project Includes
 // ─────────────────────────────
-rootProject.name = "ley-template"
+rootProject.name = "ley-linguae"
 
 include("api", "common")
 
-project(":api").projectDir = file("tmp-api")
-project(":common").projectDir = file("tmp-common")
+project(":api").projectDir = file("lng-api")
+project(":common").projectDir = file("lng-common")
