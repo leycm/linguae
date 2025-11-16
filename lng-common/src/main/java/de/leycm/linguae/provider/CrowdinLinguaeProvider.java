@@ -1,0 +1,60 @@
+package de.leycm.linguae.provider;
+
+import de.leycm.linguae.AbstractLinguaeProvider;
+import de.leycm.linguae.Label;
+import de.leycm.linguae.placeholder.PsPattern;
+import lombok.NonNull;
+
+import java.net.URI;
+import java.net.http.*;
+import java.util.*;
+import java.util.function.Function;
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
+import net.kyori.adventure.text.Component;
+
+public class CrowdinLinguaeProvider extends AbstractLinguaeProvider {
+    private final String apiToken;
+    private final String projectId;
+    private final HttpClient client;
+    private final Gson gson;
+
+    public CrowdinLinguaeProvider(final @NonNull HashMap<String, Function<String, Label>> labels,
+                                  final @NonNull Function<String, Component> parser,
+                                  final @NonNull PsPattern pattern,
+                                  final @NonNull String apiToken,
+                                  final @NonNull String projectId) {
+        super(labels, parser, pattern);
+        this.apiToken = apiToken;
+        this.projectId = projectId;
+        this.client = HttpClient.newHttpClient();
+        this.gson = new Gson();
+    }
+
+    @Override
+    protected @NonNull Map<String, String> loadLanguage(final @NonNull Locale lang) throws Exception {
+        String languageCode = lang.toLanguageTag();
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create("https://api.crowdin.com/api/v2/projects/" + projectId +
+                        "/translations/exports?targetLanguageId=" + languageCode))
+                .header("Authorization", "Bearer " + apiToken)
+                .GET()
+                .build();
+
+        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+        JsonObject json = gson.fromJson(response.body(), JsonObject.class);
+
+        Map<String, String> translations = new HashMap<>();
+        json.getAsJsonObject("data").getAsJsonObject("strings").entrySet()
+                .forEach(e -> translations.put(e.getKey(), e.getValue().getAsString()));
+
+        return translations;
+    }
+
+    @Override
+    protected @NonNull String handleMissingTranslation(final @NonNull String key,
+                                                       final @NonNull Locale lang) {
+        return "[" + lang.toLanguageTag() + ":" + key + "]";
+    }
+
+}
