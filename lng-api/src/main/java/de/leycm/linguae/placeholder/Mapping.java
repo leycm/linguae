@@ -2,11 +2,13 @@ package de.leycm.linguae.placeholder;
 
 import lombok.NonNull;
 
+import java.util.function.Supplier;
 import java.util.regex.Matcher;
 
-public record Mapping(@NonNull MappingRule rule,
+public record Mapping(@NonNull PsPattern rule,
                       @NonNull String key,
-                      @NonNull String value) {
+                      @NonNull Supplier<String> value
+) {
 
     public @NonNull String map(final @NonNull String text) {
         final Matcher matcher = rule.getPattern().matcher(text);
@@ -16,7 +18,7 @@ public record Mapping(@NonNull MappingRule rule,
         while (matcher.find()) {
             if (!matcher.group(1).equals(key)) continue;
             result.append(text, lastEnd, matcher.start());
-            result.append(value);
+            result.append(value.get());
             lastEnd = matcher.end();
         }
 

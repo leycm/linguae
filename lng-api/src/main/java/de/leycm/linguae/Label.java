@@ -1,6 +1,16 @@
+/**
+ * LECP-LICENSE NOTICE
+ * <br><br>
+ * This Sourcecode is under the LECP-LICENSE. <br>
+ * License at: <a href="https://github.com/leycm/leycm/blob/main/LICENSE">GITHUB</a>
+ * <br><br>
+ * Copyright (c) LeyCM <a href="mailto:leycm@proton.me">leycm@proton.me</a> l <br>
+ * Copyright (c) maintainers <br>
+ * Copyright (c) contributors
+ */
 package de.leycm.linguae;
 
-import de.leycm.linguae.placeholder.Mapper;
+import de.leycm.linguae.placeholder.Mappings;
 
 import lombok.NonNull;
 
@@ -148,18 +158,21 @@ public interface Label {
      *
      * @return the LinguaeProvider that created this label, never null
      */
-    @NonNull
-    LinguaeProvider provider();
+    @NonNull LinguaeProvider provider();
 
     /**
      * Returns the current mappings applied to this label.
      *
      * @return the mapper containing placeholder mappings, never null
      */
-    @NonNull Mapper mappings();
+    @NonNull Mappings mappings();
+
+    default @NonNull String mapped(final @NonNull Locale lang) {
+        return mappings().map(in(lang));
+    }
 
     /**
-     * Renders this label as a Adventure Component in the specified locale.
+     * Renders this label as an Adventure Component in the specified locale.
      *
      * <p>
      * This is a convenience method that delegates to the provider's text parsing
@@ -172,6 +185,10 @@ public interface Label {
      */
     default @NonNull Component asComponent(final @NonNull Locale lang) {
         return provider().parseText(in(lang));
+    }
+
+    default @NonNull Component asMappedComponent(final @NonNull Locale lang) {
+        return provider().parseText(mappings().map(in(lang)));
     }
 
     /**

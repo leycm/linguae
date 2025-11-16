@@ -10,7 +10,7 @@
  */
 package de.leycm.linguae;
 
-import de.leycm.linguae.placeholder.MappingRule;
+import de.leycm.linguae.placeholder.PsPattern;
 import de.leycm.neck.instance.Initializable;
 
 import lombok.NonNull;
@@ -19,6 +19,7 @@ import net.kyori.adventure.text.Component;
 import org.jetbrains.annotations.Contract;
 
 import java.text.ParseException;
+import java.util.Locale;
 
 /**
  * LinguaeProvider
@@ -75,7 +76,7 @@ public interface LinguaeProvider extends Initializable {
      * @return the default mapping rule, never null
      */
     @NonNull
-    MappingRule getDefaultPlaceholder();
+    PsPattern getDefaultPlaceholderPattern();
 
     /**
      * Creates a new translatable label with the specified translation key.
@@ -122,6 +123,10 @@ public interface LinguaeProvider extends Initializable {
      */
     @NonNull Label parseLabel(final @NonNull String parsable)
             throws ParseException;
+
+    //TODO : docs
+    @NonNull String translate(final @NonNull String key,
+                                 final @NonNull Locale lang);
 
     /**
      * Parses plain text into an Adventure Component.

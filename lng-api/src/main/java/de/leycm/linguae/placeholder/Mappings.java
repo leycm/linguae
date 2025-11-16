@@ -1,3 +1,13 @@
+/**
+ * LECP-LICENSE NOTICE
+ * <br><br>
+ * This Sourcecode is under the LECP-LICENSE. <br>
+ * License at: <a href="https://github.com/leycm/leycm/blob/main/LICENSE">GITHUB</a>
+ * <br><br>
+ * Copyright (c) LeyCM <a href="mailto:leycm@proton.me">leycm@proton.me</a> l <br>
+ * Copyright (c) maintainers <br>
+ * Copyright (c) contributors
+ */
 package de.leycm.linguae.placeholder;
 
 import de.leycm.linguae.LinguaeProvider;
@@ -6,9 +16,10 @@ import lombok.NonNull;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Supplier;
 
 /**
- * Mapper
+ * Mappings
  *
  * <p>
  * A thread-safe, immutable container for placeholder mappings that facilitates
@@ -22,17 +33,17 @@ import java.util.List;
  * @author LeyCM
  * @since 1.0.1
  */
-public record Mapper(List<Mapping> mappings) {
+public record Mappings(List<Mapping> mappings) {
 
     /**
-     * Constructs an empty Mapper with no mappings.
+     * Constructs an empty Mappings with no mappings.
      */
-    public Mapper() {
+    public Mappings() {
         this(new ArrayList<>());
     }
 
     /**
-     * Constructs a Mapper with the specified mappings.
+     * Constructs a Mappings with the specified mappings.
      *
      * <p>
      * The provided list is copied to ensure immutability of the mapper instance.
@@ -41,7 +52,7 @@ public record Mapper(List<Mapping> mappings) {
      * @param mappings the initial mappings to include, cannot be null
      * @throws NullPointerException if mappings is null
      */
-    public Mapper(final @NonNull List<Mapping> mappings) {
+    public Mappings(final @NonNull List<Mapping> mappings) {
         this.mappings = new ArrayList<>(mappings);
     }
 
@@ -55,11 +66,29 @@ public record Mapper(List<Mapping> mappings) {
      *
      * @param key the placeholder key to replace, cannot be null
      * @param value the value to substitute, cannot be null
-     * @return a new Mapper instance with the added mapping
+     * @return a new Mappings instance with the added mapping
      * @throws NullPointerException if key or value is null
      */
-    public @NonNull Mapper add(final @NonNull String key,
-                               final @NonNull Object value) {
+    public @NonNull Mappings add(final @NonNull String key,
+                                 final @NonNull Object value) {
+        return add(LinguaeProvider.getInstance(), key, () -> value);
+    }
+
+    /**
+     * Adds a new mapping using the default placeholder rule from the default provider.
+     *
+     * <p>
+     * This is a convenience method that uses the singleton LinguaeProvider instance
+     * and its default placeholder rule.
+     * </p>
+     *
+     * @param key the placeholder key to replace, cannot be null
+     * @param value the {@link Supplier} providing the value to substitute, cannot be null
+     * @return a new Mappings instance with the added mapping
+     * @throws NullPointerException if key or value is null
+     */
+    public @NonNull Mappings add(final @NonNull String key,
+                                 final @NonNull Supplier<Object> value) {
         return add(LinguaeProvider.getInstance(), key, value);
     }
 
@@ -68,14 +97,14 @@ public record Mapper(List<Mapping> mappings) {
      *
      * @param provider the LinguaeProvider to get the default placeholder rule from, cannot be null
      * @param key the placeholder key to replace, cannot be null
-     * @param value the value to substitute, cannot be null
-     * @return a new Mapper instance with the added mapping
+     * @param value the {@link Supplier} providing the value to substitute, cannot be null
+     * @return a new Mappings instance with the added mapping
      * @throws NullPointerException if provider, key, or value is null
      */
-    public @NonNull Mapper add(final @NonNull LinguaeProvider provider,
-                               final @NonNull String key,
-                               final @NonNull Object value) {
-        return add(provider.getDefaultPlaceholder(), key, value);
+    public @NonNull Mappings add(final @NonNull LinguaeProvider provider,
+                                 final @NonNull String key,
+                                 final @NonNull Supplier<Object> value) {
+        return add(provider.getDefaultPlaceholderPattern(), key, value);
     }
 
     /**
@@ -83,20 +112,20 @@ public record Mapper(List<Mapping> mappings) {
      *
      * <p>
      * The value is converted to string using {@link String#valueOf(Object)}.
-     * Returns a new Mapper instance, leaving the original unchanged.
+     * Returns a new Mappings instance, leaving the original unchanged.
      * </p>
      *
      * @param rule the mapping rule to use for this placeholder, cannot be null
      * @param key the placeholder key to replace, cannot be null
-     * @param value the value to substitute, cannot be null
-     * @return a new Mapper instance with the added mapping
+     * @param value the {@link Supplier} providing the value to substitute, cannot be null
+     * @return a new Mappings instance with the added mapping
      * @throws NullPointerException if rule, key, or value is null
      */
-    public @NonNull Mapper add(final @NonNull MappingRule rule,
-                               final @NonNull String key,
-                               final @NonNull Object value) {
-        final Mapper newMapper = new Mapper(this.mappings);
-        newMapper.mappings.add(new Mapping(rule, key, String.valueOf(value)));
+    public @NonNull Mappings add(final @NonNull PsPattern rule,
+                                 final @NonNull String key,
+                                 final @NonNull Supplier<Object> value) {
+        final Mappings newMapper = new Mappings(this.mappings);
+        newMapper.mappings.add(new Mapping(rule, key, () -> String.valueOf(value.get())));
         return newMapper;
     }
 
@@ -113,15 +142,13 @@ public record Mapper(List<Mapping> mappings) {
      * @throws NullPointerException if text is null
      */
     public @NonNull String map(final @NonNull String text) {
-        if (mappings.isEmpty()) {
-            return text;
-        }
+        if (mappings.isEmpty()) return text;
 
         String result = text;
 
-        for (final Mapping mapping : mappings) {
+        for (final Mapping mapping : mappings)
             result = mapping.map(result);
-        }
+
 
         return result;
     }
@@ -135,7 +162,7 @@ public record Mapper(List<Mapping> mappings) {
      * @throws NullPointerException if text or rule is null
      */
     private boolean containsPlaceholder(final @NonNull String text,
-                                        final @NonNull MappingRule rule) {
+                                        final @NonNull PsPattern rule) {
         return text.contains(rule.getPrefix());
     }
 

@@ -1,3 +1,13 @@
+/**
+ * LECP-LICENSE NOTICE
+ * <br><br>
+ * This Sourcecode is under the LECP-LICENSE. <br>
+ * License at: <a href="https://github.com/leycm/leycm/blob/main/LICENSE">GITHUB</a>
+ * <br><br>
+ * Copyright (c) LeyCM <a href="mailto:leycm@proton.me">leycm@proton.me</a> l <br>
+ * Copyright (c) maintainers <br>
+ * Copyright (c) contributors
+ */
 package de.leycm.linguae.placeholder;
 
 import lombok.NonNull;
@@ -5,7 +15,7 @@ import lombok.NonNull;
 import java.util.regex.Pattern;
 
 /**
- * MappingRule
+ * PsPattern
  *
  * <p>
  * Defines a pattern for placeholder mapping with prefix and suffix delimiters.
@@ -18,39 +28,39 @@ import java.util.regex.Pattern;
  * @author LeyCM
  * @since 1.0.1
  */
-public class MappingRule {
+public class PsPattern {
 
     /**
      * Dollar-style placeholder pattern: ${variable}
      */
-    public static final @NonNull MappingRule DOLLAR = new MappingRule("${", "}");
+    public static final @NonNull PsPattern DOLLAR = new PsPattern("${", "}");
 
     /**
      * Percent-style placeholder pattern: %variable%
      */
-    public static final @NonNull MappingRule PERCENT = new MappingRule("%", "%");
+    public static final @NonNull PsPattern PERCENT = new PsPattern("%", "%");
 
     /**
      * F-string style placeholder pattern: %variable
      */
-    public static final @NonNull MappingRule FSTRING = new MappingRule("%", "");
+    public static final @NonNull PsPattern FSTRING = new PsPattern("%", "");
 
     /**
      * Curly brace placeholder pattern: {{variable}}
      */
-    public static final @NonNull MappingRule CURLY = new MappingRule("{{", "}}");
+    public static final @NonNull PsPattern CURLY = new PsPattern("{{", "}}");
 
     /**
      * MiniMessage style placeholder pattern: <var:variable>
      */
-    public static final @NonNull MappingRule MINI_MESSAGE = new MappingRule("<var:", ">");
+    public static final @NonNull PsPattern MINI_MESSAGE = new PsPattern("<var:", ">");
 
     private final String prefix;
     private final String suffix;
     private final Pattern pattern;
 
     /**
-     * Constructs a new MappingRule with the specified prefix and suffix.
+     * Constructs a new PsPattern with the specified prefix and suffix.
      *
      * <p>
      * The pattern is compiled to efficiently match placeholders in the format:
@@ -62,7 +72,7 @@ public class MappingRule {
      * @param suffix the suffix delimiter for placeholders, cannot be null
      * @throws NullPointerException if prefix or suffix is null
      */
-    public MappingRule(final @NonNull String prefix, final @NonNull String suffix) {
+    public PsPattern(final @NonNull String prefix, final @NonNull String suffix) {
         this.prefix = prefix;
         this.suffix = suffix;
         this.pattern = Pattern.compile(
