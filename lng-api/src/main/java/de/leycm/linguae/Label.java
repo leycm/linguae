@@ -20,13 +20,10 @@ import java.text.ParseException;
 import java.util.Locale;
 
 /**
- * Label
+ * Represents a localizable text element.
  *
- * <p>
- * Represents a localizable text element that can be rendered in different languages
- * and formats. Labels can be either translatable (looked up from resource bundles)
- * or predefined (static text). Supports placeholder mapping and component conversion.
- * </p>
+ * <p>Labels can be either translatable (looked up from resource bundles)
+ * or predefined (static text). Supports placeholder mapping and component conversion.</p>
  *
  * <p>Implementations should be immutable and thread-safe.</p>
  *
@@ -38,12 +35,10 @@ public interface Label {
     /**
      * Parses a label from the given string using the default provider.
      *
-     * <p>
-     * This method delegates to the singleton LinguaeProvider instance to parse
-     * the label according to the provider's parsing rules.
-     * </p>
+     * <p>This method delegates to the singleton LinguaeProvider instance to parse
+     * the label according to the provider's parsing rules.</p>
      *
-     * @param parsable the string to parse into a label, cannot be null
+     * @param parsable the string to parse into a label
      * @return the parsed label, never null
      * @throws ParseException if the string cannot be parsed as a valid label
      * @throws NullPointerException if parsable is null
@@ -56,8 +51,8 @@ public interface Label {
     /**
      * Parses a label from the given string using the specified provider.
      *
-     * @param factory the provider to use for parsing, cannot be null
-     * @param parsable the string to parse into a label, cannot be null
+     * @param factory the provider to use for parsing
+     * @param parsable the string to parse into a label
      * @return the parsed label, never null
      * @throws ParseException if the string cannot be parsed as a valid label
      * @throws NullPointerException if factory or parsable is null
@@ -71,12 +66,10 @@ public interface Label {
     /**
      * Creates a translatable label with the given key using the default provider.
      *
-     * <p>
-     * Translatable labels are resolved at runtime based on the current locale
-     * and available resource bundles.
-     * </p>
+     * <p>Translatable labels are resolved at runtime based on the current locale
+     * and available resource bundles.</p>
      *
-     * @param key the translation key, cannot be null
+     * @param key the translation key
      * @return a translatable label for the given key, never null
      * @throws NullPointerException if key is null
      */
@@ -87,8 +80,8 @@ public interface Label {
     /**
      * Creates a translatable label with the given key using the specified provider.
      *
-     * @param factory the provider to create the label with, cannot be null
-     * @param key the translation key, cannot be null
+     * @param factory the provider to create the label with
+     * @param key the translation key
      * @return a translatable label for the given key, never null
      * @throws NullPointerException if factory or key is null
      */
@@ -100,12 +93,10 @@ public interface Label {
     /**
      * Creates a predefined label with the given text using the default provider.
      *
-     * <p>
-     * Predefined labels represent static text that doesn't require translation
-     * lookup and is used as-is.
-     * </p>
+     * <p>Predefined labels represent static text that doesn't require translation
+     * lookup and is used as-is.</p>
      *
-     * @param pre the predefined text content, cannot be null
+     * @param pre the predefined text content
      * @return a predefined label with the given text, never null
      * @throws NullPointerException if pre is null
      */
@@ -116,8 +107,8 @@ public interface Label {
     /**
      * Creates a predefined label with the given text using the specified provider.
      *
-     * @param factory the provider to create the label with, cannot be null
-     * @param pre the predefined text content, cannot be null
+     * @param factory the provider to create the label with
+     * @param pre the predefined text content
      * @return a predefined label with the given text, never null
      * @throws NullPointerException if factory or pre is null
      */
@@ -129,13 +120,11 @@ public interface Label {
     /**
      * Renders this label as a string in the specified locale.
      *
-     * <p>
-     * For translatable labels, this performs translation lookup and placeholder
+     * <p>For translatable labels, this performs translation lookup and placeholder
      * replacement. For predefined labels, this returns the static text with
-     * any applied mappings.
-     * </p>
+     * any applied mappings.</p>
      *
-     * @param lang the target locale for rendering, cannot be null
+     * @param lang the target locale for rendering
      * @return the rendered string in the specified locale, never null
      * @throws NullPointerException if lang is null
      */
@@ -144,10 +133,8 @@ public interface Label {
     /**
      * Returns a string representation of this label.
      *
-     * <p>
-     * The exact format is implementation-dependent but should provide meaningful
-     * information about the label's type and content.
-     * </p>
+     * <p>The exact format is implementation-dependent but should provide meaningful
+     * information about the label's type and content.</p>
      *
      * @return a string representation of this label, never null
      */
@@ -167,6 +154,13 @@ public interface Label {
      */
     @NonNull Mappings mappings();
 
+    /**
+     * Renders this label with applied mappings in the specified locale.
+     *
+     * @param lang the target locale for rendering
+     * @return the rendered string with placeholders replaced
+     * @throws NullPointerException if lang is null
+     */
     default @NonNull String mapped(final @NonNull Locale lang) {
         return mappings().map(in(lang));
     }
@@ -174,12 +168,10 @@ public interface Label {
     /**
      * Renders this label as an Adventure Component in the specified locale.
      *
-     * <p>
-     * This is a convenience method that delegates to the provider's text parsing
-     * capabilities to convert the rendered string into a component.
-     * </p>
+     * <p>This is a convenience method that delegates to the provider's text parsing
+     * capabilities to convert the rendered string into a component.</p>
      *
-     * @param lang the target locale for rendering, cannot be null
+     * @param lang the target locale for rendering
      * @return the rendered component in the specified locale, never null
      * @throws NullPointerException if lang is null
      */
@@ -187,6 +179,13 @@ public interface Label {
         return provider().parseText(in(lang));
     }
 
+    /**
+     * Renders this label with applied mappings as an Adventure Component.
+     *
+     * @param lang the target locale for rendering
+     * @return the rendered component with placeholders replaced
+     * @throws NullPointerException if lang is null
+     */
     default @NonNull Component asMappedComponent(final @NonNull Locale lang) {
         return provider().parseText(mappings().map(in(lang)));
     }
@@ -194,10 +193,8 @@ public interface Label {
     /**
      * Returns this label as a string using default locale settings.
      *
-     * <p>
-     * The exact behavior is implementation-dependent but typically uses a
-     * system default or fallback locale.
-     * </p>
+     * <p>The exact behavior is implementation-dependent but typically uses a
+     * system default or fallback locale.</p>
      *
      * @return the label rendered as a string, never null
      */

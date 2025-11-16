@@ -15,13 +15,10 @@ import lombok.NonNull;
 import java.util.regex.Pattern;
 
 /**
- * PsPattern
- *
- * <p>
  * Defines a pattern for placeholder mapping with prefix and suffix delimiters.
- * Provides commonly used placeholder patterns as static constants and compiles
- * efficient regex patterns for placeholder detection and replacement.
- * </p>
+ *
+ * <p>Provides commonly used placeholder patterns as static constants and compiles
+ * efficient regex patterns for placeholder detection and replacement.</p>
  *
  * <p>Instances are immutable and thread-safe.</p>
  *
@@ -62,14 +59,12 @@ public class PsPattern {
     /**
      * Constructs a new PsPattern with the specified prefix and suffix.
      *
-     * <p>
-     * The pattern is compiled to efficiently match placeholders in the format:
+     * <p>The pattern is compiled to efficiently match placeholders in the format:
      * {@code prefix + content + suffix}. The content is captured as a group and
-     * cannot contain the first character of the suffix for proper termination.
-     * </p>
+     * cannot contain the first character of the suffix for proper termination.</p>
      *
-     * @param prefix the prefix delimiter for placeholders, cannot be null
-     * @param suffix the suffix delimiter for placeholders, cannot be null
+     * @param prefix the prefix delimiter for placeholders
+     * @param suffix the suffix delimiter for placeholders
      * @throws NullPointerException if prefix or suffix is null
      */
     public PsPattern(final @NonNull String prefix, final @NonNull String suffix) {
@@ -101,10 +96,8 @@ public class PsPattern {
     /**
      * Returns the compiled regex pattern for this mapping rule.
      *
-     * <p>
-     * The pattern is optimized for matching placeholders that follow the
-     * prefix-content-suffix structure defined by this rule.
-     * </p>
+     * <p>The pattern is optimized for matching placeholders that follow the
+     * prefix-content-suffix structure defined by this rule.</p>
      *
      * @return the compiled regex pattern, never null
      */

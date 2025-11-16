@@ -1,3 +1,13 @@
+/**
+ * LECP-LICENSE NOTICE
+ * <br><br>
+ * This Sourcecode is under the LECP-LICENSE. <br>
+ * License at: <a href="https://github.com/leycm/leycm/blob/main/LICENSE">GITHUB</a>
+ * <br><br>
+ * Copyright (c) LeyCM <a href="mailto:leycm@proton.me">leycm@proton.me</a> l <br>
+ * Copyright (c) maintainers <br>
+ * Copyright (c) contributors
+ */
 package de.leycm.linguae.placeholder;
 
 import lombok.NonNull;
@@ -5,11 +15,26 @@ import lombok.NonNull;
 import java.util.function.Supplier;
 import java.util.regex.Matcher;
 
+/**
+ * Represents a single placeholder mapping rule.
+ *
+ * <p>This record defines a pattern to identify placeholders, the key to match,
+ * and the value supplier for replacement.</p>
+ *
+ * @param rule the pattern used to identify placeholders
+ * @param key the placeholder key to match
+ * @param value the supplier providing the replacement value
+ */
 public record Mapping(@NonNull PsPattern rule,
                       @NonNull String key,
-                      @NonNull Supplier<String> value
-) {
+                      @NonNull Supplier<String> value) {
 
+    /**
+     * Applies this mapping to the input text, replacing matched placeholders.
+     *
+     * @param text the input text to process
+     * @return the text with placeholders replaced by their mapped values
+     */
     public @NonNull String map(final @NonNull String text) {
         final Matcher matcher = rule.getPattern().matcher(text);
         final StringBuilder result = new StringBuilder(text.length());
@@ -27,5 +52,4 @@ public record Mapping(@NonNull PsPattern rule,
         result.append(text, lastEnd, text.length());
         return result.toString();
     }
-
 }
