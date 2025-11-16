@@ -31,27 +31,27 @@ import java.util.regex.Pattern;
 public class PsPattern {
 
     /**
-     * Dollar-style placeholder pattern: ${variable}
+     * Dollar-style placeholder pattern: {@code ${variable}}
      */
     public static final @NonNull PsPattern DOLLAR = new PsPattern("${", "}");
 
     /**
-     * Percent-style placeholder pattern: %variable%
+     * Percent-style placeholder pattern: {@code %variable%}
      */
     public static final @NonNull PsPattern PERCENT = new PsPattern("%", "%");
 
     /**
-     * F-string style placeholder pattern: %variable
+     * F-string style placeholder pattern: {@code %variable}
      */
     public static final @NonNull PsPattern FSTRING = new PsPattern("%", "");
 
     /**
-     * Curly brace placeholder pattern: {{variable}}
+     * Curly brace placeholder pattern: {@code {{variable}}}
      */
     public static final @NonNull PsPattern CURLY = new PsPattern("{{", "}}");
 
     /**
-     * MiniMessage style placeholder pattern: <var:variable>
+     * MiniMessage style placeholder pattern: {@code <var:variable>}
      */
     public static final @NonNull PsPattern MINI_MESSAGE = new PsPattern("<var:", ">");
 
