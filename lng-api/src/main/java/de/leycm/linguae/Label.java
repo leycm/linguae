@@ -128,7 +128,7 @@ public interface Label {
      * @return the rendered string in the specified locale, never null
      * @throws NullPointerException if lang is null
      */
-    @NonNull String in(final @NonNull Locale lang);
+    @NonNull String in(@NonNull Locale lang);
 
     /**
      * Returns a string representation of this label.

@@ -25,8 +25,6 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
 
 /**
- * AbstractLinguaeProvider
- *
  * <p>
  * Default implementation of {@link LinguaeProvider}. Serves as the entry
  * point for initializing and accessing the Linguae API.

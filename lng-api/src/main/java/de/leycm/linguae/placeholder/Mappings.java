@@ -27,6 +27,7 @@ import java.util.function.Supplier;
  *
  * <p>Instances are immutable - all modification operations return new instances.</p>
  *
+ * @param mappings a List of Mapping objects to start with
  * @author LeyCM
  * @since 1.0.1
  */
@@ -86,7 +87,7 @@ public record Mappings(List<Mapping> mappings) {
     /**
      * Adds a new mapping using the default placeholder rule from the specified provider.
      *
-     * @param provider the LinguaeProvider to get the default placeholder rule from
+     * @param provider the {@link LinguaeProvider} to get the default placeholder rule from
      * @param key the placeholder key to replace
      * @param value the supplier providing the value to substitute
      * @return a new Mappings instance with the added mapping

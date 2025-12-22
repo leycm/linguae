@@ -75,7 +75,7 @@ public interface LinguaeProvider extends de.leycm.neck.instance.Initializable {
      * @return a new translatable label instance, never null
      * @throws NullPointerException if key is null
      */
-    @NonNull Label createTranslatableLabel(final @NonNull String key);
+    @NonNull Label createTranslatableLabel(@NonNull String key);
 
     /**
      * Creates a new predefined label with the specified static text.
@@ -87,7 +87,7 @@ public interface LinguaeProvider extends de.leycm.neck.instance.Initializable {
      * @return a new predefined label instance, never null
      * @throws NullPointerException if pre is null
      */
-    @NonNull Label createPreDefinedLabel(final @NonNull String pre);
+    @NonNull Label createPreDefinedLabel(@NonNull String pre);
 
     /**
      * Parses a string representation into a label instance.
@@ -101,7 +101,7 @@ public interface LinguaeProvider extends de.leycm.neck.instance.Initializable {
      * @throws ParseException if the string cannot be parsed as a valid label
      * @throws NullPointerException if parsable is null
      */
-    @NonNull Label parseLabel(final @NonNull String parsable)
+    @NonNull Label parseLabel(@NonNull String parsable)
             throws ParseException;
 
     /**
@@ -112,8 +112,7 @@ public interface LinguaeProvider extends de.leycm.neck.instance.Initializable {
      * @return the translated string
      * @throws NullPointerException if key or lang is null
      */
-    @NonNull String translate(final @NonNull String key,
-                              final @NonNull Locale lang);
+    @NonNull String translate(@NonNull String key, @NonNull Locale lang);
 
     /**
      * Parses plain text into an Adventure Component.
@@ -126,5 +125,5 @@ public interface LinguaeProvider extends de.leycm.neck.instance.Initializable {
      * @return the parsed component, never null
      * @throws NullPointerException if text is null
      */
-    @NonNull Component parseText(final @NonNull String text);
+    @NonNull Component parseText(@NonNull String text);
 }
