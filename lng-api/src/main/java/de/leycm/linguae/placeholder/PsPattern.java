@@ -70,9 +70,13 @@ public class PsPattern {
     public PsPattern(final @NonNull String prefix, final @NonNull String suffix) {
         this.prefix = prefix;
         this.suffix = suffix;
-        this.pattern = Pattern.compile(
-                Pattern.quote(prefix) + "([^" + Pattern.quote(suffix.substring(0, 1)) + "]+)" + Pattern.quote(suffix)
-        );
+        if (suffix.isEmpty()) {
+            this.pattern = Pattern.compile(Pattern.quote(prefix) + "([A-Za-z0-9_]+)");
+        } else {
+            this.pattern = Pattern.compile(Pattern.quote(prefix)
+                            + "([^" + Pattern.quote(suffix.substring(0, 1)) + "]+)"
+                            + Pattern.quote(suffix));
+        }
     }
 
     /**
