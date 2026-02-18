@@ -24,6 +24,9 @@ import java.util.regex.Matcher;
  * @param rule the pattern used to identify placeholders
  * @param key the placeholder key to match
  * @param value the supplier providing the replacement value
+ *
+ * @since 1.0.1
+ * @author Lennard [leycm@proton.me]
  */
 public record Mapping(@NonNull MappingRule rule,
                       @NonNull String key,

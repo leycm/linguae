@@ -13,6 +13,7 @@ package de.leycm.linguae;
 import de.leycm.linguae.exeption.FormatException;
 import de.leycm.linguae.mapping.MappingRule;
 
+import de.leycm.linguae.source.LinguaeSource;
 import de.leycm.neck.instance.Initializable;
 import lombok.NonNull;
 
@@ -21,6 +22,7 @@ import org.jetbrains.annotations.Contract;
 
 import java.text.ParseException;
 import java.util.Locale;
+import java.util.Optional;
 import java.util.function.Function;
 
 /**
@@ -34,8 +36,8 @@ import java.util.function.Function;
  * integration with Adventure components. Implementations should be thread-safe
  * and properly initialized before use.</p>
  *
- * @author LeyCM
  * @since 1.0.1
+ * @author Lennard [leycm@proton.me]
  */
 public interface LinguaeProvider extends Initializable {
 
@@ -55,6 +57,17 @@ public interface LinguaeProvider extends Initializable {
     static @NonNull LinguaeProvider getInstance() {
         return Initializable.getInstance(LinguaeProvider.class);
     }
+
+    /**
+     * Returns the source of this provider, which is responsible for loading translation data.
+     *
+     * <p>The source provides access to translation resources, supports dynamic loading, reloading<br>
+     * and serves as the central point for loading localization data within the provider.</p>
+     *
+     * @return the {@link LinguaeSource} associated with this provider, never null
+     */
+    @NonNull
+    LinguaeSource getSource();
 
     /**
      * Returns the placeholder {@link MappingRule} used by this provider.
@@ -121,12 +134,13 @@ public interface LinguaeProvider extends Initializable {
      * Translates a key to a string in the specified locale.
      *
      * @param key the translation key
-     * @param lang the target locale
+     * @param locale the target locale
      * @return the translated string
      * @throws NullPointerException if key or lang is null
      */
     @NonNull String translate(@NonNull String key,
-                              @NonNull Locale lang);
+                              @NonNull Function<Locale, String> fallback,
+                              @NonNull Locale locale);
 
     /**
      * Serializes a Label into another extern type.
@@ -136,9 +150,10 @@ public interface LinguaeProvider extends Initializable {
      *
      * @param label the label to serialize into another type
      * @param type the target type of the serialized Object
+     * @throws IllegalArgumentException if the specified type is not supported for serialization
      * @throws NullPointerException if serialized is null
      */
-    @NonNull <T> T serialize(@NonNull Label label,
+    <T> @NonNull T serialize(@NonNull Label label,
                              @NonNull Class<T> type);
 
     /**
@@ -149,9 +164,10 @@ public interface LinguaeProvider extends Initializable {
      *
      * @param serialized the serialized Object to deserialize into a Label
      * @throws ParseException if the serialized Object cannot be parsed into a Label
+     * @throws IllegalArgumentException if the Object is not supported for deserialization
      * @throws NullPointerException if serialized is null
      */
-    @NonNull Label deserialize(@NonNull Object serialized)
+    <T> @NonNull Label deserialize(@NonNull T serialized)
             throws ParseException;
 
     /**
@@ -165,9 +181,29 @@ public interface LinguaeProvider extends Initializable {
      * @param type the target type of the formatted representation
      * @return the formatted serialized representation
      * @throws NullPointerException if input or type is null
-     * @throws ParseException if the input cannot be parsed/formatted
+     * @throws IllegalArgumentException if the specified type is not supported for formatting
+     * @throws FormatException if the input cannot be parsed/formatted
      */
-    @NonNull <T> T format(@NonNull String input,
+    <T> @NonNull T format(@NonNull String input,
                           @NonNull Class<T> type
     ) throws FormatException;
+
+    /**
+     * Clears all cached translations for all languages.
+     *
+     * <p>This method forces the provider to reload translations from the source<br>
+     * on the next translation request, allowing for dynamic updates to translation data.</p>
+     */
+    void clearCache();
+
+    /**
+     * Clears cached translations for the specified language.
+     *
+     * <p>This method forces the provider to reload translations for the given locale<br>
+     * from the source on the next translation request, allowing for dynamic updates<br>
+     * to translation data for specific languages.</p>
+     *
+     * @param locale the {@link Locale} to clear cached translations for, must not be {@code null}
+     */
+    void clearCache(@NonNull Locale locale);
 }

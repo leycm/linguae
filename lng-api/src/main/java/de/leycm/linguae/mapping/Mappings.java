@@ -28,8 +28,8 @@ import java.util.function.Supplier;
  * <p>Instances are immutable - all modification operations return new instances.</p>
  *
  * @param mappings a List of Mapping objects to start with
- * @author LeyCM
  * @since 1.0.1
+ * @author Lennard [leycm@proton.me]
  */
 public record Mappings(@NonNull List<Mapping> mappings,
                        @NonNull LinguaeProvider provider) {

@@ -25,8 +25,8 @@ import java.util.function.Function;
  *
  * <p>Implementations should be immutable and thread-safe.</p>
  *
- * @author Lennard [leycm@proton.me]
  * @since 1.0.1
+ * @author Lennard [leycm@proton.me]
  */
 public interface Label {
 
@@ -148,16 +148,6 @@ public interface Label {
     }
 
     /**
-     * Returns a string representation of this label.
-     *
-     * <p>The exact format is implementation-dependent but should provide meaningful
-     * information about the label's type and content.</p>
-     *
-     * @return a string representation of this label, never null
-     */
-    @NonNull String toString();
-
-    /**
      * Returns the provider associated with this label.
      *
      * @return the LinguaeProvider that created this label, never null
@@ -177,11 +167,11 @@ public interface Label {
      * <p>For translatable labels, this performs translation lookup.
      * For literal Labels, this returns the static text with.</p>
      *
-     * @param lang the target locale for rendering
+     * @param locale the target locale for rendering
      * @return the rendered string in the specified locale, never null
      * @throws NullPointerException if lang is null
      */
-    @NonNull String in(@NonNull Locale lang);
+    @NonNull String in(@NonNull Locale locale);
 
     /**
      * Renders this label with applied mappings as a string in the specified locale.
@@ -190,12 +180,12 @@ public interface Label {
      * replacement. For predefined labels, this returns the static text with
      * any applied mappings.</p>
      *
-     * @param lang the target locale for rendering
+     * @param locale the target locale for rendering
      * @return the rendered string with placeholders replaced, never null
      * @throws NullPointerException if lang is null
      */
-    default @NonNull String mapped(final @NonNull Locale lang) {
-        return mappings().map(in(lang));
+    default @NonNull String mapped(final @NonNull Locale locale) {
+        return mappings().map(in(locale));
     }
 
     /**
@@ -204,12 +194,12 @@ public interface Label {
      * <p>For translatable labels, this performs translation lookup.
      * For literal Labels, this returns the static text with.</p>
      *
-     * @param lang the target locale for rendering
+     * @param locale the target locale for rendering
      * @return the rendered string in the specified locale, never null
      * @throws NullPointerException if lang is null
      */
-    default <T> @NonNull T in(@NonNull Locale lang, final @NonNull Class<T> type) {
-        return provider().format(in(lang), type);
+    default <T> @NonNull T in(@NonNull Locale locale, final @NonNull Class<T> type) {
+        return provider().format(in(locale), type);
     }
 
     /**
@@ -219,12 +209,12 @@ public interface Label {
      * replacement. For predefined labels, this returns the static text with
      * any applied mappings.</p>
      *
-     * @param lang the target locale for rendering
+     * @param locale the target locale for rendering
      * @return the rendered string with placeholders replaced, never null
      * @throws NullPointerException if lang is null
      */
-    default <T> @NonNull T mapped(final @NonNull Locale lang, final @NonNull Class<T> type) {
-        return provider().format(mappings().map(in(lang)), type);
+    default <T> @NonNull T mapped(final @NonNull Locale locale, final @NonNull Class<T> type) {
+        return provider().format(mappings().map(in(locale)), type);
     }
 
     /**
@@ -238,5 +228,39 @@ public interface Label {
     default @NonNull String asString() {
         return provider().serialize(this, String.class);
     }
+
+    /**
+     * Returns a string representation of this label.
+     *
+     * <p>The exact format is implementation-dependent but should provide meaningful
+     * information about the label's type and content.</p>
+     *
+     * @return a string representation of this label, never null
+     */
+    @Override
+    @NonNull String toString();
+
+    /**
+     * Compares this label to another object for equality.
+     *
+     * <p>Two labels are considered equal if they have the same provider, key, and
+     * mappings. The exact equality criteria may vary based on the implementation.</p>
+     *
+     * @param obj the object to compare with
+     * @return true if this label is equal to the other object, false otherwise
+     */
+    @Override
+    boolean equals(Object obj);
+
+    /**
+     * Returns a hash code value for this label.
+     *
+     * <p>The hash code should be consistent with the equals method, meaning that
+     * equal labels must have the same hash code.</p>
+     *
+     * @return a hash code value for this label
+     */
+    @Override
+    int hashCode();
 
 }

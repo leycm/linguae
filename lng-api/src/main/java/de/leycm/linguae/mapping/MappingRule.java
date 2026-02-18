@@ -22,8 +22,8 @@ import java.util.regex.Pattern;
  *
  * <p>Instances are immutable and thread-safe.</p>
  *
- * @author LeyCM
  * @since 1.0.1
+ * @author Lennard [leycm@proton.me]
  */
 public class MappingRule {
 
