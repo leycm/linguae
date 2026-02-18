@@ -8,17 +8,15 @@
  * Copyright (c) maintainers <br>
  * Copyright (c) contributors
  */
-package de.leycm.linguaev2;
+package de.leycm.linguae;
 
-import de.leycm.linguae.Label;
-import de.leycm.linguae.LinguaeProvider;
 import de.leycm.linguae.exeption.FormatException;
 import de.leycm.linguae.mapping.MappingRule;
 import de.leycm.linguae.serialize.LabelSerializer;
 import de.leycm.linguae.source.LinguaeSource;
-import de.leycm.linguaev2.exeption.IncompatibleMatchException;
-import de.leycm.linguaev2.label.LiteralLabel;
-import de.leycm.linguaev2.label.LocaleLabel;
+import de.leycm.linguae.exeption.IncompatibleMatchException;
+import de.leycm.linguae.label.LiteralLabel;
+import de.leycm.linguae.label.LocaleLabel;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 

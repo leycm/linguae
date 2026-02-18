@@ -8,7 +8,7 @@
  * Copyright (c) maintainers <br>
  * Copyright (c) contributors
  */
-package de.leycm.linguaev2.label;
+package de.leycm.linguae.label;
 
 import de.leycm.linguae.Label;
 import de.leycm.linguae.LinguaeProvider;
@@ -16,26 +16,23 @@ import de.leycm.linguae.mapping.Mappings;
 import lombok.NonNull;
 
 import java.util.Locale;
-import java.util.function.Function;
 
-
-public record LocaleLabel(
+public record LiteralLabel(
         @NonNull LinguaeProvider provider,
         @NonNull Mappings mappings,
-        @NonNull String key,
-        @NonNull Function<Locale, String> fallback
-        ) implements Label {
+        @NonNull String literal
+) implements Label {
 
-    public LocaleLabel { }
+    public LiteralLabel { }
 
-    public LocaleLabel(@NonNull LinguaeProvider provider, @NonNull String key,
-                       @NonNull Function<Locale, String> fallback) {
-        this(provider, new Mappings(provider), key, fallback);
+    public LiteralLabel(@NonNull LinguaeProvider provider,
+                        @NonNull String literal) {
+        this(provider, new Mappings(provider), literal);
     }
 
     @Override
     public @NonNull String in(@NonNull Locale locale) {
-        return provider().translate(key(), fallback, locale);
+        return literal;
     }
 
     @Override
@@ -47,13 +44,13 @@ public record LocaleLabel(
     public boolean equals(Object obj) {
         if (this == obj) return true;
         if (obj == null || getClass() != obj.getClass()) return false;
-        LocaleLabel that = (LocaleLabel) obj;
-        return key().equals(that.key());
+        LiteralLabel that = (LiteralLabel) obj;
+        return literal.equals(that.literal);
     }
 
     @Override
     public int hashCode() {
-        return key().hashCode();
+        return literal.hashCode();
     }
 
 }

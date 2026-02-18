@@ -1,4 +1,4 @@
-package de.leycm.linguaev2.exeption;
+package de.leycm.linguae.exeption;
 
 public class IncompatibleMatchException extends IllegalArgumentException {
     public IncompatibleMatchException(Class<?> type, Throwable cause) {
