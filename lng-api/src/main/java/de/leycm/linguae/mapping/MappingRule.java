@@ -8,7 +8,7 @@
  * Copyright (c) maintainers <br>
  * Copyright (c) contributors
  */
-package de.leycm.linguae.placeholder;
+package de.leycm.linguae.mapping;
 
 import lombok.NonNull;
 
@@ -25,32 +25,32 @@ import java.util.regex.Pattern;
  * @author LeyCM
  * @since 1.0.1
  */
-public class PsPattern {
+public class MappingRule {
 
     /**
      * Dollar-style placeholder pattern: {@code ${variable}}
      */
-    public static final @NonNull PsPattern DOLLAR = new PsPattern("${", "}");
+    public static final @NonNull MappingRule DOLLAR = new MappingRule("${", "}");
 
     /**
      * Percent-style placeholder pattern: {@code %variable%}
      */
-    public static final @NonNull PsPattern PERCENT = new PsPattern("%", "%");
+    public static final @NonNull MappingRule PERCENT = new MappingRule("%", "%");
 
     /**
      * F-string style placeholder pattern: {@code %variable}
      */
-    public static final @NonNull PsPattern FSTRING = new PsPattern("%", "");
+    public static final @NonNull MappingRule FSTRING = new MappingRule("%", "");
 
     /**
      * Curly brace placeholder pattern: {@code {{variable}}}
      */
-    public static final @NonNull PsPattern CURLY = new PsPattern("{{", "}}");
+    public static final @NonNull MappingRule CURLY = new MappingRule("{{", "}}");
 
     /**
      * MiniMessage style placeholder pattern: {@code <var:variable>}
      */
-    public static final @NonNull PsPattern MINI_MESSAGE = new PsPattern("<var:", ">");
+    public static final @NonNull MappingRule MINI_MESSAGE = new MappingRule("<var:", ">");
 
     private final String prefix;
     private final String suffix;
@@ -67,7 +67,7 @@ public class PsPattern {
      * @param suffix the suffix delimiter for placeholders
      * @throws NullPointerException if prefix or suffix is null
      */
-    public PsPattern(final @NonNull String prefix, final @NonNull String suffix) {
+    public MappingRule(final @NonNull String prefix, final @NonNull String suffix) {
         this.prefix = prefix;
         this.suffix = suffix;
         if (suffix.isEmpty()) {
