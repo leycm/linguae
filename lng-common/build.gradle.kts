@@ -2,7 +2,7 @@ dependencies {
     implementation(libs.leyneck)
     compileOnly(libs.jetanno)
 
-    implementation(libs.bundles.adventure)
+    compileOnly(libs.bundles.adventure)
     implementation(project(":api"))
 }
 
