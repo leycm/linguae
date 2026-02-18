@@ -8,7 +8,7 @@
  * Copyright (c) maintainers <br>
  * Copyright (c) contributors
  */
-package de.leycm.linguae.placeholder;
+package de.leycm.linguae.mapping;
 
 import de.leycm.linguae.LinguaeProvider;
 
@@ -28,16 +28,29 @@ import java.util.function.Supplier;
  * <p>Instances are immutable - all modification operations return new instances.</p>
  *
  * @param mappings a List of Mapping objects to start with
- * @author LeyCM
  * @since 1.0.1
+ * @author Lennard [leycm@proton.me]
  */
-public record Mappings(List<Mapping> mappings) {
+public record Mappings(@NonNull List<Mapping> mappings,
+                       @NonNull LinguaeProvider provider) {
 
     /**
      * Constructs an empty Mappings with no mappings.
      */
     public Mappings() {
         this(new ArrayList<>());
+    }
+
+    /**
+     * Constructs an empty Mappings with no mappings but a special {@link LinguaeProvider}.
+     *
+     * <p>The provided list is copied to ensure immutability.</p>
+     *
+     * @param provider the provider to resolve Rules
+     * @throws NullPointerException if mappings is null
+     */
+    public Mappings(final @NonNull LinguaeProvider provider) {
+        this(new ArrayList<>(), provider);
     }
 
     /**
@@ -49,7 +62,22 @@ public record Mappings(List<Mapping> mappings) {
      * @throws NullPointerException if mappings is null
      */
     public Mappings(final @NonNull List<Mapping> mappings) {
+        this(mappings, LinguaeProvider.getInstance());
+    }
+
+    /**
+     * Constructs a Mappings with the specified mappings.
+     *
+     * <p>The provided list is copied to ensure immutability.</p>
+     *
+     * @param mappings the initial mappings to include
+     * @param provider the provider to resolve Rules
+     * @throws NullPointerException if mappings or provider is null
+     */
+    public Mappings(final @NonNull List<Mapping> mappings,
+                    final @NonNull LinguaeProvider provider) {
         this.mappings = new ArrayList<>(mappings);
+        this.provider = provider;
     }
 
     /**
@@ -60,12 +88,12 @@ public record Mappings(List<Mapping> mappings) {
      *
      * @param key the placeholder key to replace
      * @param value the value to substitute
-     * @return a new Mappings instance with the added mapping
+     * @return a new Mappings instance with the added mapping, never null
      * @throws NullPointerException if key or value is null
      */
     public @NonNull Mappings add(final @NonNull String key,
                                  final @NonNull Object value) {
-        return add(LinguaeProvider.getInstance(), key, () -> value);
+        return add(provider, key, () -> value);
     }
 
     /**
@@ -76,12 +104,12 @@ public record Mappings(List<Mapping> mappings) {
      *
      * @param key the placeholder key to replace
      * @param value the supplier providing the value to substitute
-     * @return a new Mappings instance with the added mapping
+     * @return a new Mappings instance with the added mapping, never null
      * @throws NullPointerException if key or value is null
      */
     public @NonNull Mappings add(final @NonNull String key,
                                  final @NonNull Supplier<Object> value) {
-        return add(LinguaeProvider.getInstance(), key, value);
+        return add(provider, key, value);
     }
 
     /**
@@ -90,13 +118,13 @@ public record Mappings(List<Mapping> mappings) {
      * @param provider the {@link LinguaeProvider} to get the default placeholder rule from
      * @param key the placeholder key to replace
      * @param value the supplier providing the value to substitute
-     * @return a new Mappings instance with the added mapping
+     * @return a new Mappings instance with the added mapping, never null
      * @throws NullPointerException if provider, key, or value is null
      */
     public @NonNull Mappings add(final @NonNull LinguaeProvider provider,
                                  final @NonNull String key,
                                  final @NonNull Supplier<Object> value) {
-        return add(provider.getDefaultPlaceholderPattern(), key, value);
+        return add(provider.getMappingRule(), key, value);
     }
 
     /**
@@ -108,10 +136,10 @@ public record Mappings(List<Mapping> mappings) {
      * @param rule the mapping rule to use for this placeholder
      * @param key the placeholder key to replace
      * @param value the supplier providing the value to substitute
-     * @return a new Mappings instance with the added mapping
+     * @return a new Mappings instance with the added mapping, never null
      * @throws NullPointerException if rule, key, or value is null
      */
-    public @NonNull Mappings add(final @NonNull PsPattern rule,
+    public @NonNull Mappings add(final @NonNull MappingRule rule,
                                  final @NonNull String key,
                                  final @NonNull Supplier<Object> value) {
         final Mappings newMapper = new Mappings(this.mappings);
@@ -126,7 +154,7 @@ public record Mappings(List<Mapping> mappings) {
      * the original text is returned unchanged.</p>
      *
      * @param text the input text containing placeholders
-     * @return the text with all placeholders replaced by their mapped values
+     * @return the text with all placeholders replaced by their mapped values, never null
      * @throws NullPointerException if text is null
      */
     public @NonNull String map(final @NonNull String text) {
@@ -143,7 +171,7 @@ public record Mappings(List<Mapping> mappings) {
     /**
      * Returns the number of mappings in this mapper.
      *
-     * @return the number of mappings
+     * @return the number of mappings, never negative
      */
     public int size() {
         return mappings.size();

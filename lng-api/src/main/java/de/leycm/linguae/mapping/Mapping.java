@@ -8,7 +8,7 @@
  * Copyright (c) maintainers <br>
  * Copyright (c) contributors
  */
-package de.leycm.linguae.placeholder;
+package de.leycm.linguae.mapping;
 
 import lombok.NonNull;
 
@@ -24,16 +24,30 @@ import java.util.regex.Matcher;
  * @param rule the pattern used to identify placeholders
  * @param key the placeholder key to match
  * @param value the supplier providing the replacement value
+ *
+ * @since 1.0.1
+ * @author Lennard [leycm@proton.me]
  */
-public record Mapping(@NonNull PsPattern rule,
+public record Mapping(@NonNull MappingRule rule,
                       @NonNull String key,
                       @NonNull Supplier<String> value) {
+
+    /**
+     * Constructs a new Mapping with the specified rule, key, and value supplier.
+     *
+     * @param rule the pattern used to identify placeholders
+     * @param key the placeholder key to match
+     * @param value the supplier providing the replacement value
+     */
+    public Mapping {
+    }
 
     /**
      * Applies this mapping to the input text, replacing matched placeholders.
      *
      * @param text the input text to process
-     * @return the text with placeholders replaced by their mapped values
+     * @return the text with placeholders replaced by their mapped values, never null
+     * @throws NullPointerException if text is null
      */
     public @NonNull String map(final @NonNull String text) {
         final Matcher matcher = rule.getPattern().matcher(text);
