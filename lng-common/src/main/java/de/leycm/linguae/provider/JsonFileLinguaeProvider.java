@@ -6,6 +6,7 @@ import de.leycm.linguae.placeholder.PsPattern;
 import lombok.NonNull;
 import com.google.gson.Gson;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.TextComponent;
 
 import java.io.Reader;
 import java.net.URI;
@@ -21,7 +22,7 @@ public class JsonFileLinguaeProvider extends AbstractLinguaeProvider {
     private final HttpClient client;
 
     public JsonFileLinguaeProvider(final @NonNull HashMap<String, Function<String, Label>> labels,
-                                   final @NonNull Function<String, Component> parser,
+                                   final @NonNull Function<String, TextComponent> parser,
                                    final @NonNull PsPattern pattern,
                                    final @NonNull String basePath) {
         super(labels, parser, pattern);

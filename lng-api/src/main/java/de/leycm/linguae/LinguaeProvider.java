@@ -15,6 +15,7 @@ import de.leycm.linguae.placeholder.PsPattern;
 import lombok.NonNull;
 
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.TextComponent;
 import org.jetbrains.annotations.Contract;
 
 import java.text.ParseException;
@@ -125,5 +126,5 @@ public interface LinguaeProvider extends de.leycm.neck.instance.Initializable {
      * @return the parsed component, never null
      * @throws NullPointerException if text is null
      */
-    @NonNull Component parseText(@NonNull String text);
+    @NonNull TextComponent parseText(@NonNull String text);
 }

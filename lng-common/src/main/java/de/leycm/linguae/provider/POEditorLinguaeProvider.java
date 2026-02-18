@@ -22,6 +22,7 @@ import java.util.function.Function;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.TextComponent;
 
 public class POEditorLinguaeProvider extends AbstractLinguaeProvider {
     private final String apiToken;
@@ -30,7 +31,7 @@ public class POEditorLinguaeProvider extends AbstractLinguaeProvider {
     private final Gson gson;
 
     public POEditorLinguaeProvider(final @NonNull HashMap<String, Function<String, Label>> labels,
-                                   final @NonNull Function<String, Component> parser,
+                                   final @NonNull Function<String, TextComponent> parser,
                                    final @NonNull PsPattern pattern,
                                    final @NonNull String apiToken,
                                    final @NonNull String projectId) {

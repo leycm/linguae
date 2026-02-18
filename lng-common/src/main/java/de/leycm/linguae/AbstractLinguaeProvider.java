@@ -16,6 +16,7 @@ import de.leycm.linguae.placeholder.Mappings;
 import de.leycm.linguae.placeholder.PsPattern;
 import lombok.NonNull;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.TextComponent;
 
 import java.text.ParseException;
 import java.util.HashMap;
@@ -41,11 +42,11 @@ public abstract class AbstractLinguaeProvider implements LinguaeProvider {
     private final Map<String, Map<String, String>> translationCache = new ConcurrentHashMap<>();
 
     private final HashMap<String, Function<String, Label>> labels;
-    private final Function<String, Component> parser;
+    private final Function<String, TextComponent> parser;
     private final PsPattern pattern;
 
     protected AbstractLinguaeProvider(final @NonNull HashMap<String, Function<String, Label>> labels,
-                                      final @NonNull Function<String, Component> parser,
+                                      final @NonNull Function<String, TextComponent> parser,
                                       final @NonNull PsPattern pattern) {
         this.labels = labels;
         this.parser = parser;
@@ -118,7 +119,7 @@ public abstract class AbstractLinguaeProvider implements LinguaeProvider {
     }
 
     @Override
-    public @NonNull Component parseText(final @NonNull String text) {
+    public @NonNull TextComponent parseText(final @NonNull String text) {
         return parser.apply(text);
     }
 

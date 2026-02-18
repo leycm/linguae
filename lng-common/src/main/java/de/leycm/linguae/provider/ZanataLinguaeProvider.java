@@ -21,6 +21,7 @@ import java.util.*;
 import java.util.function.Function;
 import com.google.gson.Gson;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.TextComponent;
 
 public class ZanataLinguaeProvider extends AbstractLinguaeProvider {
     private final String apiKey;
@@ -31,7 +32,7 @@ public class ZanataLinguaeProvider extends AbstractLinguaeProvider {
     private final Gson gson;
 
     public ZanataLinguaeProvider(final @NonNull HashMap<String, Function<String, Label>> labels,
-                                 final @NonNull Function<String, Component> parser,
+                                 final @NonNull Function<String, TextComponent> parser,
                                  final @NonNull PsPattern pattern,
                                  final @NonNull String apiKey,
                                  final @NonNull String username,

@@ -15,6 +15,7 @@ import de.leycm.linguae.placeholder.Mappings;
 import lombok.NonNull;
 
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.TextComponent;
 
 import java.text.ParseException;
 import java.util.Locale;
@@ -175,7 +176,7 @@ public interface Label {
      * @return the rendered component in the specified locale, never null
      * @throws NullPointerException if lang is null
      */
-    default @NonNull Component asComponent(final @NonNull Locale lang) {
+    default @NonNull TextComponent asComponent(final @NonNull Locale lang) {
         return provider().parseText(in(lang));
     }
 
@@ -186,7 +187,7 @@ public interface Label {
      * @return the rendered component with placeholders replaced
      * @throws NullPointerException if lang is null
      */
-    default @NonNull Component asMappedComponent(final @NonNull Locale lang) {
+    default @NonNull TextComponent asMappedComponent(final @NonNull Locale lang) {
         return provider().parseText(mappings().map(in(lang)));
     }
 
