@@ -19,6 +19,7 @@ import de.leycm.linguae.label.LiteralLabel;
 import de.leycm.linguae.label.LocaleLabel;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
+import org.jetbrains.annotations.Contract;
 
 import java.text.ParseException;
 import java.util.Locale;
@@ -28,6 +29,11 @@ import java.util.function.Function;
 
 @Slf4j
 public class CommonLinguaeProvider implements LinguaeProvider {
+
+    @Contract(value = " -> new", pure = true)
+    public static @NonNull Builder builder() {
+        return new Builder();
+    }
 
     public static class Builder {
         private final Map<Class<?>, LabelSerializer<?>> serializerRegistry;
@@ -97,7 +103,7 @@ public class CommonLinguaeProvider implements LinguaeProvider {
                     Map<String, String> translations = null;
                     try {translations = source.loadLanguage(locale);
                     } catch (Exception e) {
-                        log.error("Failed to load translations for locale {}: {}", locale, e.getMessage());
+                        // todo: maybe log here? but we clearly 
                         translations = new ConcurrentHashMap<>();
                     }
                     return new ConcurrentHashMap<>(translations);

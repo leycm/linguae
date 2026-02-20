@@ -150,7 +150,7 @@ public interface Label {
     /**
      * Returns the provider associated with this label.
      *
-     * @return the LinguaeProvider that created this label, never null
+     * @return the {@link LinguaeProvider} that created this label, never null
      */
     @NonNull LinguaeProvider provider();
 
