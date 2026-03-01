@@ -10,12 +10,15 @@
  */
 package de.leycm.linguae;
 
+import de.leycm.linguae.mapping.Mapping;
+import de.leycm.linguae.mapping.MappingRule;
 import de.leycm.linguae.mapping.Mappings;
 
 import lombok.NonNull;
 
 import java.util.Locale;
 import java.util.function.Function;
+import java.util.function.Supplier;
 
 /**
  * Represents a localizable text element.
@@ -162,10 +165,97 @@ public interface Label {
     @NonNull Mappings mappings();
 
     /**
+     * Adds a new mapping with the specified key and value using the default placeholder rule.
+     *
+     * <p>Returns this Label instance with the added mapping.</p>
+     *
+     * @param key the placeholder key to replace
+     * @param value the value to substitute for the placeholder
+     * @return this Label instance with the added mapping, never null
+     * @throws NullPointerException if key or value is null
+     */
+    default @NonNull Label withMapping(final @NonNull String key,
+                                       final @NonNull Object value) {
+        return withMapping(key, () -> value);
+    }
+
+    /**
+     * Adds a new mapping with the specified key and value supplier using the default placeholder rule.
+     *
+     * <p>Returns this Label instance with the added mapping.</p>
+     *
+     * @param key the placeholder key to replace
+     * @param supplier the supplier providing the value to substitute for the placeholder
+     * @return this Label instance with the added mapping, never null
+     * @throws NullPointerException if key or value is null
+     */
+    default @NonNull Label withMapping(final @NonNull String key,
+                                       final @NonNull Supplier<Object> supplier) {
+        return withMapping(provider().getMappingRule(), key, supplier);
+    }
+
+    /**
+     * Adds a new mapping with the specified rule, key, and value supplier.
+     *
+     * <p>Returns this Label instance with the added mapping.</p>
+     *
+     * @param rule the mapping rule to use for this placeholder
+     * @param key the placeholder key to replace
+     * @param supplier the supplier providing the value to substitute for the placeholder
+     * @return this Label instance with the added mapping, never null
+     * @throws NullPointerException if rule, key, or value is null
+     */
+    default @NonNull Label withMapping(final @NonNull MappingRule rule,
+                                       final @NonNull String key,
+                                       final @NonNull Supplier<Object> supplier) {
+        return withMapping(new Mapping(rule, key, () -> String.valueOf(supplier.get())));
+    }
+
+    /**
+     * Adds a new mapping to this label.
+     *
+     * <p>Returns a new Label instance with the added mapping.</p>
+     *
+     * @param mapping the mapping to add
+     * @return a new Label instance with the added mapping, never null
+     * @throws NullPointerException if mapping is null
+     */
+    default @NonNull Label withMapping(final @NonNull Mapping mapping) {
+        mappings().add(mapping);
+        return this;
+    }
+
+    /**
+     * Renders this label as a string in the specified default locale of the Provider.
+     *
+     * <p>For translatable labels, this performs translation lookup.
+     * For literal Labels, this returns the static text.</p>
+     *
+     * @return the rendered string in the specified locale, never null
+     * @throws NullPointerException if lang is null
+     */
+    default @NonNull String in() {
+        return in(provider().getLocale());
+    }
+
+    /**
+     * Renders this label as a string in the specified default locale of the Provider.
+     *
+     * <p>For translatable labels, this performs translation lookup.
+     * For literal Labels, this returns the static text.</p>
+     *
+     * @return the rendered string in the specified locale, never null
+     * @throws NullPointerException if lang is null
+     */
+    default @NonNull String mapped() {
+        return mapped(provider().getLocale());
+    }
+
+    /**
      * Renders this label as a string in the specified locale.
      *
      * <p>For translatable labels, this performs translation lookup.
-     * For literal Labels, this returns the static text with.</p>
+     * For literal Labels, this returns the static text.</p>
      *
      * @param locale the target locale for rendering
      * @return the rendered string in the specified locale, never null
@@ -185,14 +275,14 @@ public interface Label {
      * @throws NullPointerException if lang is null
      */
     default @NonNull String mapped(final @NonNull Locale locale) {
-        return mappings().map(in(locale));
+        return mappings().apply(in(locale));
     }
 
     /**
      * Renders this label formated out of the String as a {@code type} in the specified locale.
      *
      * <p>For translatable labels, this performs translation lookup.
-     * For literal Labels, this returns the static text with.</p>
+     * For literal Labels, this returns the static text.</p>
      *
      * @param locale the target locale for rendering
      * @return the rendered string in the specified locale, never null
@@ -214,7 +304,7 @@ public interface Label {
      * @throws NullPointerException if lang is null
      */
     default <T> @NonNull T mapped(final @NonNull Locale locale, final @NonNull Class<T> type) {
-        return provider().format(mappings().map(in(locale)), type);
+        return provider().format(mappings().apply(in(locale)), type);
     }
 
     /**

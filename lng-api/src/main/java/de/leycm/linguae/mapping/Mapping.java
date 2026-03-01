@@ -49,7 +49,7 @@ public record Mapping(@NonNull MappingRule rule,
      * @return the text with placeholders replaced by their mapped values, never null
      * @throws NullPointerException if text is null
      */
-    public @NonNull String map(final @NonNull String text) {
+    public @NonNull String apply(final @NonNull String text) {
         final Matcher matcher = rule.getPattern().matcher(text);
         final StringBuilder result = new StringBuilder(text.length());
 

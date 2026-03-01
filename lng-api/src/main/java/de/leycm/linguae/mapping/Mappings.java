@@ -103,13 +103,13 @@ public record Mappings(@NonNull List<Mapping> mappings,
      * and its default placeholder rule.</p>
      *
      * @param key the placeholder key to replace
-     * @param value the supplier providing the value to substitute
+     * @param supplier the supplier providing the value to substitute
      * @return a new Mappings instance with the added mapping, never null
      * @throws NullPointerException if key or value is null
      */
     public @NonNull Mappings add(final @NonNull String key,
-                                 final @NonNull Supplier<Object> value) {
-        return add(provider, key, value);
+                                 final @NonNull Supplier<Object> supplier) {
+        return add(provider, key, supplier);
     }
 
     /**
@@ -117,14 +117,14 @@ public record Mappings(@NonNull List<Mapping> mappings,
      *
      * @param provider the {@link LinguaeProvider} to get the default placeholder rule from
      * @param key the placeholder key to replace
-     * @param value the supplier providing the value to substitute
+     * @param supplier the supplier providing the value to substitute
      * @return a new Mappings instance with the added mapping, never null
      * @throws NullPointerException if provider, key, or value is null
      */
     public @NonNull Mappings add(final @NonNull LinguaeProvider provider,
                                  final @NonNull String key,
-                                 final @NonNull Supplier<Object> value) {
-        return add(provider.getMappingRule(), key, value);
+                                 final @NonNull Supplier<Object> supplier) {
+        return add(provider.getMappingRule(), key, supplier);
     }
 
     /**
@@ -135,16 +135,29 @@ public record Mappings(@NonNull List<Mapping> mappings,
      *
      * @param rule the mapping rule to use for this placeholder
      * @param key the placeholder key to replace
-     * @param value the supplier providing the value to substitute
+     * @param supplier the supplier providing the value to substitute
      * @return a new Mappings instance with the added mapping, never null
      * @throws NullPointerException if rule, key, or value is null
      */
     public @NonNull Mappings add(final @NonNull MappingRule rule,
                                  final @NonNull String key,
-                                 final @NonNull Supplier<Object> value) {
-        final Mappings newMapper = new Mappings(this.mappings);
-        newMapper.mappings.add(new Mapping(rule, key, () -> String.valueOf(value.get())));
-        return newMapper;
+                                 final @NonNull Supplier<Object> supplier) {
+        return add(new Mapping(rule, key, () -> String.valueOf(supplier.get())));
+    }
+
+    /**
+     * Adds a new mapping with the specified rule, key, and value.
+     *
+     * <p>The value is converted to string using {@link String#valueOf(Object)}.
+     * Returns a new Mappings instance, leaving the original unchanged.</p>
+     *
+     * @param mapping the mapping to use
+     * @return a new Mappings instance with the added mapping, never null
+     * @throws NullPointerException if rule, key, or value is null
+     */
+    public @NonNull Mappings add(final @NonNull Mapping mapping) {
+        mappings.add(mapping);
+        return this;
     }
 
     /**
@@ -157,13 +170,13 @@ public record Mappings(@NonNull List<Mapping> mappings,
      * @return the text with all placeholders replaced by their mapped values, never null
      * @throws NullPointerException if text is null
      */
-    public @NonNull String map(final @NonNull String text) {
+    public @NonNull String apply(final @NonNull String text) {
         if (mappings.isEmpty()) return text;
 
         String result = text;
 
         for (final Mapping mapping : mappings)
-            result = mapping.map(result);
+            result = mapping.apply(result);
 
         return result;
     }

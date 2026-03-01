@@ -66,8 +66,18 @@ public interface LinguaeProvider extends Initializable {
      *
      * @return the {@link LinguaeSource} associated with this provider, never null
      */
-    @NonNull
-    LinguaeSource getSource();
+    @NonNull LinguaeSource getSource();
+
+    /**
+     * Returns the default locale used by this provider for translation and formatting.
+     *
+     * <p>The default locale is used as a fallback when no specific locale is provided<br>
+     * during label resolution or translation requests. It should be a valid locale supported<br>
+     * by the provider's source.</p>
+     *
+     * @return the default {@link Locale} for this provider, never null
+     */
+    @NonNull Locale getLocale();
 
     /**
      * Returns the placeholder {@link MappingRule} used by this provider.
@@ -77,8 +87,7 @@ public interface LinguaeProvider extends Initializable {
      *
      * @return the default mapping rule, never null
      */
-    @NonNull
-    MappingRule getMappingRule();
+    @NonNull MappingRule getMappingRule();
 
     /**
      * Parses a string representation into a label instance.

@@ -11,12 +11,12 @@
 package de.leycm.linguae;
 
 import de.leycm.linguae.exeption.FormatException;
-import de.leycm.linguae.mapping.MappingRule;
-import de.leycm.linguae.serialize.LabelSerializer;
-import de.leycm.linguae.source.LinguaeSource;
 import de.leycm.linguae.exeption.IncompatibleMatchException;
 import de.leycm.linguae.label.LiteralLabel;
 import de.leycm.linguae.label.LocaleLabel;
+import de.leycm.linguae.mapping.MappingRule;
+import de.leycm.linguae.serialize.LabelSerializer;
+import de.leycm.linguae.source.LinguaeSource;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.Contract;
@@ -25,6 +25,7 @@ import java.text.ParseException;
 import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Function;
 
 @Slf4j
@@ -38,10 +39,12 @@ public class CommonLinguaeProvider implements LinguaeProvider {
     public static class Builder {
         private final Map<Class<?>, LabelSerializer<?>> serializerRegistry;
         private MappingRule mappingRule;
+        private Locale locale;
 
         private Builder() {
             this.serializerRegistry = new ConcurrentHashMap<>();
             this.mappingRule = MappingRule.FSTRING;
+            this.locale = Locale.US; // may use Locale.getDefault()
         }
 
         public Builder withSerializer(final @NonNull Class<?> type,
@@ -55,8 +58,13 @@ public class CommonLinguaeProvider implements LinguaeProvider {
             return this;
         }
 
+        public Builder locale(final @NonNull Locale locale) {
+            this.locale = locale;
+            return this;
+        }
+
         public CommonLinguaeProvider build(final @NonNull LinguaeSource source) {
-            return new CommonLinguaeProvider(serializerRegistry, mappingRule, source);
+            return new CommonLinguaeProvider(serializerRegistry, mappingRule, source, locale);
         }
     }
 
@@ -64,20 +72,28 @@ public class CommonLinguaeProvider implements LinguaeProvider {
     private final Map<Class<?>, LabelSerializer<?>> serializerRegistry = new ConcurrentHashMap<>();
     private final MappingRule mappingRule;
     private final LinguaeSource source;
+    private final Locale locale;
 
 
     private CommonLinguaeProvider(
             final @NonNull Map<Class<?>, LabelSerializer<?>> serializers,
             final @NonNull MappingRule mappingRule,
-            final @NonNull LinguaeSource source) {
+            final @NonNull LinguaeSource source,
+            final @NonNull Locale locale) {
         this.mappingRule = mappingRule;
         this.serializerRegistry.putAll(serializers);
         this.source = source;
+        this.locale = locale;
     }
 
     @Override
     public @NonNull LinguaeSource getSource() {
         return source;
+    }
+
+    @Override
+    public @NonNull Locale getLocale() {
+        return locale;
     }
 
     @Override
@@ -99,15 +115,52 @@ public class CommonLinguaeProvider implements LinguaeProvider {
     public @NonNull String translate(final @NonNull String key,
                                      final @NonNull Function<Locale, String> fallback,
                                      final @NonNull Locale locale) {
-        return translationCache.computeIfAbsent(locale.toLanguageTag(), l -> {
-                    Map<String, String> translations = null;
-                    try {translations = source.loadLanguage(locale);
-                    } catch (Exception e) {
-                        // todo: maybe log here? but we clearly 
-                        translations = new ConcurrentHashMap<>();
-                    }
-                    return new ConcurrentHashMap<>(translations);
-        }).computeIfAbsent(key, k -> fallback.apply(locale));
+
+        final AtomicReference<RuntimeException> exception = new AtomicReference<>();
+        final String localeTag = locale.toLanguageTag();
+        final Locale defaultLocale = getLocale();
+        final String defaultTag = defaultLocale.toLanguageTag();
+
+        Map<String, String> localeMap = translationCache.computeIfAbsent(localeTag, tag ->
+                loadTranslationsSafe(locale, exception)
+        );
+
+        String value = localeMap.computeIfAbsent(key, k -> {
+
+            if (!locale.equals(defaultLocale)) {
+                Map<String, String> defaultMap = translationCache.computeIfAbsent(defaultTag, tag ->
+                        loadTranslationsSafe(defaultLocale, exception)
+                );
+
+                String defaultValue = defaultMap.get(k);
+                if (defaultValue != null) {
+                    localeMap.put(k, defaultValue);
+                    return defaultValue;
+                }
+            }
+
+            return fallback.apply(locale);
+        });
+
+        if (exception.get() != null) {
+            throw exception.get();
+        }
+
+        return value;
+    }
+
+    @Contract("_, _ -> new")
+    private @NonNull Map<String, String> loadTranslationsSafe(Locale locale,
+                                                                                       AtomicReference<RuntimeException> exception) {
+        try {
+            Map<String, String> translations = source.loadLanguage(locale);
+            return new ConcurrentHashMap<>(translations);
+        } catch (Exception e) {
+            exception.set(new RuntimeException(
+                    "Failed to load translations for locale: " + locale.toLanguageTag(), e
+            ));
+            return new ConcurrentHashMap<>();
+        }
     }
 
     @Override
