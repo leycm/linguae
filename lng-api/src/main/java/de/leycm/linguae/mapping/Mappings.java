@@ -156,8 +156,9 @@ public record Mappings(@NonNull List<Mapping> mappings,
      * @throws NullPointerException if {@code mapping} is {@code null}
      */
     public @NonNull Mappings add(final @NonNull Mapping mapping) {
-        mappings.add(mapping);
-        return this;
+        List<Mapping> newMappings = new ArrayList<>(mappings);
+        newMappings.add(mapping);
+        return new Mappings(newMappings, provider);
     }
 
     /**
